@@ -1,0 +1,105 @@
+/* .main{
+    width: 400px;
+    height: 400px;
+    background-color: grey;
+    /* display:flex */
+/* column-count: 4; */
+
+body{
+    background: url(Outer_Space.png);
+    background-size: cover;
+}
+.main {
+    /* opacity: 0.8; */
+    /* position: absolute; */
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    width: 434px;
+    background-color: grey;
+    display: grid;
+    grid-template-columns: repeat(4, 106.25px);
+    grid-gap: 3px;
+    border-radius: 5px;
+}
+
+.box {
+    box-sizing: border-box;
+    height: 106.25px;
+    border-radius: 3px;
+    background: #acaaaa;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    border: 2px solid white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+}
+
+
+.new {
+    animation: animate-pop ease 0.4s;
+    /* animation-fill-mode: backwards; */
+}
+
+
+@keyframes animate-pop {
+    0% {
+        opacity: 0;
+        transform: scale(0.25, 0.25);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1, 1);
+    }
+}
+
+#message{
+    visibility: hidden;
+    margin-top: 20px;
+    position: absolute;
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    width: 30%;
+    text-align: center;
+    border: 2px rgb(255, 199, 199) solid;
+    border-radius: 20px;
+    /* background-color:rgb(34, 40, 49); */
+    background-color:rgb(0,173,181);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  }
+
+  .top{
+    
+    margin-left: auto; 
+    margin-right: auto;
+    display: flex;
+    width: 450px;
+    
+  }
+
+#score{
+    width: 50%;
+    position: relative;
+    left: 10px;
+    background-color: #BBADA0;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+}
+  #best{
+    width: 50%;
+    position: relative;
+    right: 10px;
+    background-color: #BBADA0;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+  }
