@@ -1,4 +1,12 @@
+// window.addEventListener("keydown", function(e) {
+//     // space, page up, page down and arrow keys:
+//     if([32, 33, 34, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+//         e.preventDefault();
+//     }
+// }, false);
+
 let b = [];
+
 b[0] = document.getElementById("box0")
 b[1] = document.getElementById("box1")
 b[2] = document.getElementById("box2")
@@ -15,32 +23,145 @@ b[12] = document.getElementById("box12")
 b[13] = document.getElementById("box13")
 b[14] = document.getElementById("box14")
 b[15] = document.getElementById("box15")
-const scorebox=document.getElementById("score");
-const bestbox=document.getElementById("best");
-let score=0;
-let bestscore =localStorage.getItem("best");
+
+const scorebox = document.getElementById("score");
+const bestbox = document.getElementById("best");
+let score = 0;
+let bestscore = localStorage.getItem("best");
 // bestscore.innerText="Best "+ bestscore;
 if (localStorage.getItem("best") === null) {
     updatelocalstorage();
 }
-else{
-    bestbox.innerText="BEST  "+ bestscore; 
+else {
+    bestbox.innerText = "BEST  " + bestscore;
 }
+
 let active = [];
 let hidden = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 let rightbox = [3, 7, 11, 15]
 let leftbox = [0, 4, 8, 12]
 let j, i;
 let enter = 1;
-let exit=1;
-let movedown=0;
-let moveup=0;
-let moveright=0;
-let moveleft=0;
+let exit = 1;
+let movedown = 0;
+let moveup = 0;
+let moveright = 0;
+let moveleft = 0;
+
+function swipedetect(el, callback) {
+    var touchsurface = el,
+        swipedir,
+        startX,
+        startY,
+        distX,
+        distY,
+        threshold = 150, //required min distance traveled to be considered swipe
+        restraint = 100, // maximum distance allowed at the same time in perpendicular direction
+        allowedTime = 300, // maximum time allowed to travel that distance
+        elapsedTime,
+        startTime,
+        handleswipe = callback || function (swipedir) { }
+
+    touchsurface.addEventListener('touchstart', function (e) {
+        var touchobj = e.changedTouches[0]
+        swipedir = 'none'
+        dist = 0
+        startX = touchobj.pageX
+        startY = touchobj.pageY
+        startTime = new Date().getTime() // record time when finger first makes contact with surface
+        // e.preventDefault()
+    }, false)
+
+    touchsurface.addEventListener('touchmove', function (e) {
+        // e.preventDefault() // prevent scrolling when inside DIV
+    }, false)
+
+    touchsurface.addEventListener('touchend', function (e) {
+        var touchobj = e.changedTouches[0]
+        distX = touchobj.pageX - startX // get horizontal dist traveled by finger while in contact with surface
+        distY = touchobj.pageY - startY // get vertical dist traveled by finger while in contact with surface
+        elapsedTime = new Date().getTime() - startTime // get time elapsed
+        if (elapsedTime <= allowedTime) { // first condition for awipe met
+            if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint) { // 2nd condition for horizontal swipe met
+                swipedir = (distX < 0) ? 'left' : 'right' // if dist traveled is negative, it indicates left swipe
+            }
+            else if (Math.abs(distY) >= threshold && Math.abs(distX) <= restraint) { // 2nd condition for vertical swipe met
+                swipedir = (distY < 0) ? 'up' : 'down' // if dist traveled is negative, it indicates up swipe
+            }
+        }
+        handleswipe(swipedir)
+        // e.preventDefault()
+    }, false)
+}
+
+var el = document;
+swipedetect(el, function (swipedir) {
+    // swipedir contains either "none", "left", "right", "up", or "down"
+    checkwin();
+    enter=0;
+    if (swipedir == 'left') {
+        left();
+        leftmerge();
+        left();
 
 
-const messageDisplay=document.getElementById("display");
-const displaybox=document.getElementById("message")
+        if (enter) {
+            randombox();
+            moveleft = 1;
+        }
+        else {
+            moveleft = 0
+        }
+        colour();
+    }
+    else if (swipedir == "right") {
+        right();
+        rightmerge();
+        right();
+
+        if (enter) {
+            randombox();
+            moveright = 1;
+        }
+        else {
+            moveright = 0;
+        }
+        colour();
+    }
+
+    else if (swipedir == 'up') {
+        up();
+        upmerge();
+        up();
+        if (enter) {
+            randombox();
+            moveup = 1;
+        }
+        else {
+            moveup = 0
+        }
+        colour();
+    }
+    else if (swipedir == 'down') {
+        down();
+        downmerge();
+        down();
+
+        if (enter) {
+            randombox();
+            movedown = 1;
+        }
+        else {
+            movedown = 0
+        }
+        colour();
+    }
+    updatelocalstorage();
+})
+
+
+const messageDisplay = document.getElementById("display");
+const displaybox = document.getElementById("message")
 
 for (let i = 0; i < 16; i++) {
     b[i].style.visibility = "hidden"
@@ -96,26 +217,26 @@ function colour() {
             b[i].style.backgroundColor = "#EF57A8";
             b[i].style.color = "#FFFFFF";
         }
-        
-        if (parseInt(b[i].innerText)>=1024){
-            b[i].style.fontSize="40px";
+
+        if (parseInt(b[i].innerText) >= 1024) {
+            b[i].style.fontSize = "40px";
         }
-        if (parseInt(b[i].innerText)>=4048){
-            b[i].style.fontSize="35px";
+        if (parseInt(b[i].innerText) >= 4048) {
+            b[i].style.fontSize = "35px";
         }
     }
 }
 
-function checkwin(){
+function checkwin() {
     for (i = 0; i < 16; i++) {
-        if(b[i].innerText=="2048"){
-            displaybox.style.visibility="visible"
-            messageDisplay.innerText="You WIN !";
-        }   
+        if (b[i].innerText == "2048") {
+            displaybox.style.visibility = "visible"
+            messageDisplay.innerText = "You WIN !";
+        }
     }
-    if (hidden.length===0 && (movedown==0 && moveup==0 && moveright==0 && moveleft==0)){
-        displaybox.style.visibility="visible"
-        messageDisplay.innerText="You lose. Press CTRL + R to play again "
+    if (hidden.length === 0 && (movedown == 0 && moveup == 0 && moveright == 0 && moveleft == 0)) {
+        displaybox.style.visibility = "visible"
+        messageDisplay.innerText = "You lose. Press CTRL + R to play again "
     }
 }
 
@@ -137,7 +258,7 @@ function randombox() {
         console.log(hidden);
 
     }
-    exit=1;
+    exit = 1;
 }
 
 randombox();
@@ -148,7 +269,7 @@ document.addEventListener("keydown", function (e) {
 
     checkwin();
     updatelocalstorage();
-    enter=0
+    enter = 0
     if (e.key === "Enter") {
         // down();
         // up();
@@ -163,10 +284,10 @@ document.addEventListener("keydown", function (e) {
         up();
         if (enter) {
             randombox();
-            moveup=1;
+            moveup = 1;
         }
         else {
-            moveup=0
+            moveup = 0
         }
         colour();
     }
@@ -174,13 +295,13 @@ document.addEventListener("keydown", function (e) {
         down();
         downmerge();
         down();
-        
+
         if (enter) {
             randombox();
-            movedown=1;
+            movedown = 1;
         }
         else {
-            movedown=0
+            movedown = 0
         }
         colour();
     }
@@ -188,14 +309,14 @@ document.addEventListener("keydown", function (e) {
         left();
         leftmerge();
         left();
-        
-        
+
+
         if (enter) {
             randombox();
-            moveleft=1;
+            moveleft = 1;
         }
         else {
-            moveleft=0
+            moveleft = 0
         }
         colour();
     }
@@ -203,13 +324,13 @@ document.addEventListener("keydown", function (e) {
         right();
         rightmerge();
         right();
-        
+
         if (enter) {
             randombox();
-            moveright=1;
+            moveright = 1;
         }
         else {
-            moveright=0;
+            moveright = 0;
         }
         colour();
     }
@@ -261,11 +382,11 @@ function downmerge() {
                 let c = b[j + 4].innerText;
 
                 if (a === c) {
-
+                    enter = 1;
                     b[j].style.visibility = "hidden";
                     b[j + 4].innerText = b[j + 4].innerText * 2;
-                    score=score+parseInt(b[j+4].innerText);
-                    scorebox.innerText="SCORE "+ score;
+                    score = score + parseInt(b[j + 4].innerText);
+                    scorebox.innerText = "SCORE " + score;
                     hidden.push(j);
                     var myIndex = active.indexOf(j);
                     if (myIndex !== -1) {
@@ -323,11 +444,11 @@ function upmerge() {
                 let c = b[j - 4].innerText;
 
                 if (a === c) {
-
+                    enter = 1;
                     b[j].style.visibility = "hidden";
                     b[j - 4].innerText = b[j - 4].innerText * 2
-                    score=score+parseInt(b[j-4].innerText);
-                    scorebox.innerText="SCORE "+ score;
+                    score = score + parseInt(b[j - 4].innerText);
+                    scorebox.innerText = "SCORE " + score;
                     hidden.push(j);
                     var myIndex = active.indexOf(j);
                     if (myIndex !== -1) {
@@ -387,11 +508,11 @@ function rightmerge() {
                     let c = b[j + 1].innerText;
 
                     if (a === c) {
-
+                        enter = 1;
                         b[j].style.visibility = "hidden";
                         b[j + 1].innerText = b[j + 1].innerText * 2
-                        score=score+parseInt(b[j+1].innerText);
-                        scorebox.innerText="SCORE "+ score;
+                        score = score + parseInt(b[j + 1].innerText);
+                        scorebox.innerText = "SCORE " + score;
                         hidden.push(j);
                         var myIndex = active.indexOf(j);
                         if (myIndex !== -1) {
@@ -449,11 +570,11 @@ function leftmerge() {
                     let c = b[j - 1].innerText;
 
                     if (a === c) {
-
+                        enter = 1;
                         b[j].style.visibility = "hidden";
                         b[j - 1].innerText = b[j - 1].innerText * 2
-                        score=score+parseInt(b[j-1].innerText);
-                        scorebox.innerText="SCORE "+ score;
+                        score = score + parseInt(b[j - 1].innerText);
+                        scorebox.innerText = "SCORE " + score;
                         hidden.push(j);
                         var myIndex = active.indexOf(j);
                         if (myIndex !== -1) {
@@ -467,13 +588,13 @@ function leftmerge() {
     }
 }
 
-function updatelocalstorage(){
+function updatelocalstorage() {
 
-    if (parseInt(score)>=bestscore){
-        bestscore=score;
-        bestbox.innerText="BEST "+ bestscore;
+    if (parseInt(score) >= bestscore) {
+        bestscore = score;
+        bestbox.innerText = "BEST " + bestscore;
         localStorage.setItem("best", bestscore);
     }
-    
+
 }
 
