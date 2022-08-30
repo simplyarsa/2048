@@ -9,6 +9,12 @@ body{
     background: url(Outer_Space.png);
     background-size: cover;
 }
+body {overflow: hidden; }
+
+body {
+    /* Disables pull-to-refresh but allows overscroll glow effects. */
+    overscroll-behavior-y: contain;
+  }
 .main {
     /* opacity: 0.8; */
     /* position: absolute; */
@@ -65,7 +71,7 @@ body{
     right: 0; 
     margin-left: auto; 
     margin-right: auto; 
-    width: 30%;
+    width: 70%;
     text-align: center;
     border: 2px rgb(255, 199, 199) solid;
     border-radius: 20px;
